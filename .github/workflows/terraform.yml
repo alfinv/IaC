@@ -5,12 +5,12 @@ on:
       branches: 
         - master
       paths: 
-        - /iac/terraform/**
+        - iac/terraform/**
     pull_request:
       branches: 
         - master
       paths: 
-        - /iac/terraform/**
+        - iac/terraform/**
 env:
     # credentials for deployment to AWS
     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
