@@ -6,6 +6,7 @@ on:
         - master
       paths: 
         - iac/terraform/**
+        - .guthub/workflows/**
     pull_request:
       branches: 
         - master
