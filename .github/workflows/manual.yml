@@ -2,21 +2,18 @@
 
 name: Manual workflow
 
-# Controls when the action will run. Workflow runs when manually triggered using the UI
-# or API.
 on:
-  workflow_dispatch:
-    # Inputs the workflow accepts.
-    inputs:
-      name:
-        # Friendly description to be shown in the UI instead of 'name'
-        description: 'Person to greet'
-        # Default value if no value is explicitly provided
-        default: 'World'
-        # Input has to be provided for the workflow to run
-        required: true
-        # The data type of the input
-        type: string
+    push:
+      branches: 
+        - master
+      paths: 
+        - iac/terraform/**
+        - .guthub/workflows/**
+    pull_request:
+      branches: 
+        - master
+      paths: 
+        - iac/terraform/**
 env:
     # credentials for deployment to AWS
     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -24,47 +21,45 @@ env:
     # S3 bucket for the terraform state. 
     BUCKET_TF_STATE: ${{ secrets.BUCKET_TF }}
     AWS_REGION: eu-north-1
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+
 jobs:
-  # This workflow contains a single job called "greet"
-  greet:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-        working-directory: ./iac/terraform
+    terraform:
+        name: "Apply terraform code changes"
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                shell: bash
+                working-directory: ./iac/terraform
+        steps:
+        - name: Checkout source code 
+          uses: actions/checkout@v4
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-    # Runs a single command using the runners shell
-    - name: Send greeting
-      run: echo "Hello ${{ inputs.name }}"
-      
-    - name: Checkout source code
-      uses: actions/checkout@v4  
-      
-    - name: Setup Terraform with specified version on the runner
-      uses: hashicorp/setup-terraform@v3
+        - name: Setup Terraform with specified version on the runner
+          uses: hashicorp/setup-terraform@v3
 
-    - name: Terraform Init
-      id: init
-      run: terraform init -backend-config "bucket=$BUCKET_TF"
+        - name: Terraform Init
+          id: init
+          run: terraform init -backend-config "bucket=$BUCKET_TF"
 
-    - name: Terraform Format
-      id: fmt
-      run: terraform fmt -check
-      continue-on-error: true
+        - name: Terraform Format
+          id: fmt
+          run: terraform fmt -check
+          continue-on-error: true 
 
-    - name: Terraform Validate
-      id: validate
-      run: terraform validate
+        - name: Terraform Validate
+          id: validate
+          run: terraform validate
 
-    - name: Terraform Plan
-      id: plan
-      run: terraform plan -no-color -input=false -out planfile
-      continue-on-error: true
+        - name: Terraform Plan
+          id: plan
+          run: terraform plan -no-color -input=false -out planfile
+          continue-on-error: true 
 
-    - name: Terraform Plan Status
-      if: steps.plan.outcome == 'failure'
-  
+        - name: Terraform Plan Status 
+          if: steps.plan.outcome == 'failure'
+          run: exit 1
+
+        - name: Terraform Apply
+          id: apply
+          if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+          run: terraform apply -auto-approve -input=false -parallelism=1 planfile
