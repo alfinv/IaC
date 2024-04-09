@@ -353,7 +353,15 @@ eksctl version
 #### Create an eks cluster using the below commands.
 This might take 15-20 minutes. Also adjust the node count 
 ```
-eksctl create cluster --name quizapp-eks-cluster --region us-east-1 --node-type t2.large --nodes-min 2 --nodes-max 4
+eksctl create cluster --name quizapp-eks-cluster --region eu-north-1 --node-type t3.micro --nodes-min 2 --nodes-max 4
+```
+ if you encounter any issues, check CloudFormation console or try 
+ ```
+eksctl utils describe-stacks --region=eu-north-1 --cluster=quizapp-eks-cluster
+```
+CloudWatch logging will not be enabled for cluster "quizapp-eks-cluster" you can enable it with 
+```
+eksctl utils update-cluster-logging --enable-types={SPECIFY-YOUR-LOG-TYPES-HERE (e.g. all)} --region=eu-north-1 --cluster=quizapp-eks-cluster
 ```
 
 ![Screenshot 2024-02-28 at 2 51 37 PM](https://github.com/cloudcore-hub/Kubernetes-DevSecOps-CI-CD-Project/assets/88560609/2cea7f67-7d6a-445c-9863-e19bccf580e2)
@@ -361,7 +369,7 @@ eksctl create cluster --name quizapp-eks-cluster --region us-east-1 --node-type 
 
 Run the command below to connect to the EKS cluster created  allowing Kubernetes operations on that cluster.
 ```
-aws eks update-kubeconfig --region us-east-1 --name quizapp-eks-cluster
+aws eks update-kubeconfig --region eu-north-1 --name quizapp-eks-cluster
 ```
 
 Once the cluster is created, you can validate whether your nodes are ready or not by the below command
