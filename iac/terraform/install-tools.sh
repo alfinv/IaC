@@ -75,6 +75,14 @@ helm repo update
 
 # Install ingress-nginx
 ###helm install ingress-nginx ingress-nginx/ingress-nginx
+cat <<EOT >> ~/.bashrc
+source <(kubectl completion bash)
+complete -o default -F __start_kubectl k
+alias kgp='kubectl get pod -o wide --show-labels'
+alias k=kubectl
+alias ka='kubectl apply -f '
+alias kn='kubectl config set-context --current --namespace '
+EOT
 
 echo "Initialization script completed successfully."
 
