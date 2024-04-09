@@ -46,12 +46,12 @@ sudo apt update
 sudo apt install trivy -y
 
 # Install Argo CD with Kubectl
-kubectl create namespace argocd
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.4.7/manifests/install.yaml
+###kubectl create namespace argocd
+###kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.4.7/manifests/install.yaml
 sudo apt install jq -y
 
 # Install Terraform
-wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+###wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
 wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
 echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
 sudo apt update
@@ -68,13 +68,13 @@ helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
 
 # Install Prometheus
-helm install prometheus prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace
+###helm install prometheus prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace
 
 # Install Grafana
-helm install grafana grafana/grafana --namespace monitoring --create-namespace
+###helm install grafana grafana/grafana --namespace monitoring --create-namespace
 
 # Install ingress-nginx
-helm install ingress-nginx ingress-nginx/ingress-nginx
+###helm install ingress-nginx ingress-nginx/ingress-nginx
 
 echo "Initialization script completed successfully."
 
